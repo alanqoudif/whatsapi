@@ -28,15 +28,15 @@ async function getOpenAIResponse(userMessage) {
 
 // Webhook لاستقبال الرسائل من WhatsApp API
 app.post('/webhook', async (req, res) => {
-    const { message, number } = req.body;
+    const { message, number } = req.body || {}; // تأكد أن البيانات موجودة
 
     // سجل الرسالة للتحقق من أنها تصل
-    console.log("Received message:", message);
-    console.log("From number:", number);
+    console.log("Received message:", message || "No message provided");
+    console.log("From number:", number || "No number provided");
 
     // تحقق إذا كانت الرسالة والرقم موجودين
     if (!message || !number) {
-        return res.status(400).send("Invalid request");
+        return res.status(400).send("Invalid request: missing message or number");
     }
 
     // الحصول على الرد من OpenAI
