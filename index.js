@@ -28,18 +28,24 @@ async function getOpenAIResponse(userMessage) {
 
 // Webhook لاستقبال الرسائل من WhatsApp API
 app.post('/webhook', async (req, res) => {
-    // تسجيل الجسم الكامل للطلب لتحليله
     console.log("Received request body:", req.body);
 
-    // استخراج الحقول message و number من الجسم
-    const { message, number } = req.body || {}; 
+    // تحقق من وجود الحقول المطلوبة في الهيكل
+    const { instance_id, data } = req.body || {};
+    if (!data || !data.data || !data.data.messages || data.data.messages.length === 0) {
+        return res.status(400).send("Invalid request: missing message or number");
+    }
 
-    // سجل الرسالة للتحقق من أنها تصل
-    console.log("Received message:", message || "No message provided");
-    console.log("From number:", number || "No number provided");
+    // استخراج الرسالة والرقم من البيانات
+    const messageObj = data.data.messages[0];
+    const message = messageObj?.text?.body || "No message provided";
+    const number = messageObj?.from || "No number provided";
 
-    // التحقق من وجود الرسالة والرقم
-    if (!message || !number) {
+    console.log("Received message:", message);
+    console.log("From number:", number);
+
+    // تحقق من وجود الرسالة والرقم
+    if (message === "No message provided" || number === "No number provided") {
         return res.status(400).send("Invalid request: missing message or number");
     }
 
