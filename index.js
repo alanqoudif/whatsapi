@@ -3,7 +3,7 @@ const axios = require('axios');
 
 // إنشاء تطبيق Express
 const app = express();
-app.use(express.json());
+app.use(express.json()); // تمكين معالجة JSON
 
 const openaiApiKey = 'sk-9rzmTq5-6lyrF5eNtt7InbF5oFpgeBuctqIW-CWj8GT3BlbkFJBQOklDUCe0K8lBeQpNHWYbiwbNMBVOyjqEkSDA8fEA';
 
@@ -28,13 +28,17 @@ async function getOpenAIResponse(userMessage) {
 
 // Webhook لاستقبال الرسائل من WhatsApp API
 app.post('/webhook', async (req, res) => {
-    const { message, number } = req.body || {}; // تأكد أن البيانات موجودة
+    // تسجيل الجسم الكامل للطلب لتحليله
+    console.log("Received request body:", req.body);
+
+    // استخراج الحقول message و number من الجسم
+    const { message, number } = req.body || {}; 
 
     // سجل الرسالة للتحقق من أنها تصل
     console.log("Received message:", message || "No message provided");
     console.log("From number:", number || "No number provided");
 
-    // تحقق إذا كانت الرسالة والرقم موجودين
+    // التحقق من وجود الرسالة والرقم
     if (!message || !number) {
         return res.status(400).send("Invalid request: missing message or number");
     }
