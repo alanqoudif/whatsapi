@@ -32,6 +32,11 @@ app.post('/webhook', async (req, res) => {
     res.json({ reply });
 });
 
+// مسار الصفحة الرئيسية "/"
+app.get('/', (req, res) => {
+    res.send('WhatsApp AI bot is running!');
+});
+
 // إعداد المنفذ
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
